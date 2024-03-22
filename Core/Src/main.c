@@ -42,6 +42,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+//#define LVGL_mode 
+#define demo_mode 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -52,14 +54,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//char LCD_str_buffer[16];
-//uint16_t X; 
-//uint16_t Y;
-uint8_t reg_adr; //адрес начального регистра с данными времени
+char LCD_str_buffer[16];
+uint16_t T_Xcord; 
+uint16_t T_Ycord;
+
 uint8_t RTC_data [6];
-
-uint8_t count = 0;
-
+//char demo_time[] = {'0', '0', '0', '5', '1', '2'};
 lv_obj_t * led_red;
 lv_obj_t * led_green;
 
@@ -123,14 +123,26 @@ int main(void)
 	tim_delay_init ();
 	delay_us(5000);
 	
-	LED_GREEN(ON);
-	LED_RED(OFF);
+	LED_GREEN(OFF);
+	LED_RED(ON);
 	
-	reg_adr = 0x00; //адрес начального регистра с данными времени
+	TouchInit();
 	
-//	TouchInit();
-//	TouchSetScreenSize(240,320);
+	#ifdef demo_mode
+	lcdInit();
+	ClearLcdMemory();
+	LCD_ShowString (2,2, "Test OK...");
+	LCD_Refresh();
 	
+	LED_RED(ON);
+	LED_GREEN(OFF);
+	
+	TouchCalibrate ();
+	
+	HAL_Delay(500);
+	#endif
+	
+	#ifdef LVGL_mode
 	lv_init();
   lv_port_disp_init();	
 	
@@ -138,30 +150,32 @@ int main(void)
 	lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(LV_PALETTE_INDIGO), LV_PART_MAIN);
 	lv_obj_set_style_text_color(lv_scr_act(), lv_color_hex(0xffffff), LV_PART_MAIN);
 
-	//Create a spinner
+	//Create a spinner. Объект Spinner представляет собой вращающуюся дугу внутри круга.
 	lv_obj_t * spinner = lv_spinner_create(lv_scr_act(), 1000, 32);
 	lv_obj_set_size(spinner, 48, 48);
 	lv_obj_align(spinner,  LV_ALIGN_TOP_MID, 0, 5);
 	
-	//---------------Create a button
-	button = button_init ();
 	
-	led_red  = lv_led_create(lv_scr_act());	
-	led_green  = lv_led_create(lv_scr_act()); //Create a led2
-	lv_2leds_init (led_red, led_green);
+	button = button_init (); // Create a button	
+	led_red  = lv_led_create(lv_scr_act());	// Create a red led	
+	led_green  = lv_led_create(lv_scr_act()); //Create a green led
+	lv_2leds_init (led_red, led_green); //init leds
 	
-	clock_span = lv_span_init ();
-	if (GetTime (RTC_ADDRESS, reg_adr, 3, RTC_data) == HAL_OK)
-	{	snprintf (time, sizeof (time), "%2u:%2u:%2u", RTC_data[0],  RTC_data[1],  RTC_data[3]);	}
+	//Создание объекта span group. Span - это объект, который используется для отображения форматированного текста. 
+	//В отличие от объекта label, spangroup может отображать текст, стилизованный под другие шрифты, цвета и размеры, в объект spangroup.
+	clock_span = lv_span_init (); 
+	
+	//SetTime (RTC_ADDRESS, FIRST_REGISTR_TIME, demo_time); //установка времени
+	
+	if (GetTime (RTC_ADDRESS, FIRST_REGISTR_TIME, 3, RTC_data) == HAL_OK) //получение данных времени  ч/м/с
+	{	
+		//snprintf (time, sizeof (time), "%2u:%2u:%2u", RTC_data[2],  RTC_data[1],  RTC_data[0]);	
+		convert_time (3, time, RTC_data);
+	}
 	else
 	{	snprintf (time, sizeof (time), "error");	}
-	lv_span_set_text_static(clock_span, time);
-	
-//	snprintf (time, sizeof (time), "%2u:%2u:%2u", hour, min, sec);
-	lv_span_set_text_static(clock_span, time);
-	
-//	lv_led_toggle(led_green);
-	//TouchCalibrate();
+	lv_span_set_text_static(clock_span, time); //Ввода статического текста. Он не будет сохранен в span, поэтому переменная 'text' должна быть "активной", пока существует span.	
+	#endif
 	
   /* USER CODE END 2 */
 
@@ -172,7 +186,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		for (count=0; count < 100; count++)
+		#ifdef LVGL_mode
+		for (uint8_t count=0; count < 100; count++)
 		{
 			lv_timer_handler();
 			HAL_Delay(10);
@@ -195,8 +210,29 @@ int main(void)
 			if (hour > 23)
 			{	hour = 0;	}
 		}
-		snprintf (time, sizeof (time), "%2u:%2u:%2u", hour, min, sec);
+		if (GetTime (RTC_ADDRESS, FIRST_REGISTR_TIME, 3, RTC_data) == HAL_OK)
+		{	
+			convert_time (3, time, RTC_data);
+		//	snprintf (time, sizeof (time), "%2u:%2u:%2u", RTC_data[2],  RTC_data[1],  RTC_data[0]);	
+		}
+		else
+		{	snprintf (time, sizeof (time), "error");	}
 		lv_span_set_text_static(clock_span, time);
+		#endif
+		
+		#ifdef demo_mode
+	//	TOOGLE_GREEN_LED();
+	//	TOOGLE_RED_LED();
+		if (ILI9341_TouchGetCoordinates(&T_Xcord, &T_Ycord) == TRUE)
+		{
+			ClearLcdMemory();
+			snprintf (LCD_str_buffer, sizeof (LCD_str_buffer), "X=%u, Y=%u", T_Xcord, T_Ycord);		
+			LCD_ShowString (2, 5, LCD_str_buffer);
+			LCD_Refresh();
+			HAL_Delay(50);
+		}
+		HAL_Delay(5);
+		#endif
   }
   /* USER CODE END 3 */
 }

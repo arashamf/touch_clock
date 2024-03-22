@@ -6,6 +6,7 @@
 #include "lvgl.h"
 #include 	<stdbool.h>
 #include 	"st7735.h"
+#include "touch.h"
 
 // DEFINES ------------------------------------------------------------------------------------------//
 #define DISP_HOR_RES    160
@@ -16,8 +17,7 @@
 // STATIC PROTOTYPES--------------------------------------------------------------------------------//
 static void disp_init(void);
 static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p);
-//static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
-//        const lv_area_t * fill_area, lv_color_t color);
+static void my_input_read(lv_indev_drv_t * drv, lv_indev_data_t * data);
 
 // STATIC VARIABLES---------------------------------------------------------------------------------//
 static lv_disp_drv_t disp_drv;	//Descriptor of a display driver
@@ -96,7 +96,16 @@ void lv_port_disp_init(void)
      * But if you have a different GPU you can use with this callback.*/
     //disp_drv.gpu_fill_cb = gpu_fill;
 
-    lv_disp_drv_register(&disp_drv);  //Finally register the driver
+		lv_disp_drv_register(&disp_drv);  //Finally register the driver
+		
+		static lv_indev_drv_t indev_drv;
+		#if 0
+		lv_indev_drv_init(&indev_drv);      //Basic initialization
+		indev_drv.type = LV_INDEV_TYPE_POINTER; //touchpad or mouse
+		indev_drv.read_cb = my_input_read;
+		
+		#endif
+		
 }
 
 //STATIC FUNCTIONS---------------------------------------------------------//
@@ -140,10 +149,27 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 	int height = area->y2 - area->y1 + 1;
 	int width = area->x2 - area->x1 + 1;
 	LCD_DrawBitmapDMA(width, height, (uint8_t *)color_p);
-	//LCD_DrawBitmap(width, height, (uint8_t *)color_p);
+	//LCD_DrawBitmap(width, height, (uint8_t *)color_p); //без DMA
 	//IMPORTANT!!!  Inform the graphics library that you are ready with the flushing//
 //	lv_disp_flush_ready(disp_drv);
 }
+
+#if 0	
+//-------------------------------------------------------------------------------------------------//
+static void my_input_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
+{
+  if(isTouch() == TRUE) 
+	{
+    data->point.x = touchpad_x;
+    data->point.y = touchpad_y;
+    data->state = LV_INDEV_STATE_PRESSED;
+  } 
+	else 
+	{
+    data->state = LV_INDEV_STATE_RELEASED; 
+  }
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------//
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
@@ -158,8 +184,9 @@ lv_span_t *  lv_span_init (void)
 	
     static lv_style_t style;
     lv_style_init(&style); //инициализаци€ стил€
-    lv_style_set_border_width(&style, 3); //установка ширины границы
+    lv_style_set_border_width(&style, 2); //установка ширины границы
     lv_style_set_border_color(&style, lv_palette_main(LV_PALETTE_ORANGE)); //установка цвета границы
+		lv_style_set_border_side(&style, LV_BORDER_SIDE_FULL);
     lv_style_set_pad_all(&style, 1); //установка отступов
     lv_style_set_align(&style, LV_TEXT_ALIGN_CENTER); //¬ыравнивание текста
 
@@ -221,7 +248,8 @@ lv_obj_t *  button_init (void)
 	lv_style_set_bg_color(&button_style, lv_palette_lighten(LV_PALETTE_GREY, 2)); //цвет фона
 	lv_style_set_border_width(&button_style, 2);
 	lv_style_set_border_color(&button_style, lv_palette_main(LV_PALETTE_RED)); //цвет границ контура
-	lv_style_set_pad_all(&button_style, 5);
+	lv_style_set_border_side(&button_style, LV_BORDER_SIDE_FULL);
+	lv_style_set_pad_all(&button_style, 3);
 	lv_style_set_text_color(&button_style, lv_palette_main(LV_PALETTE_BLUE)); //цвет текста
 	lv_style_set_text_font(&button_style, &lv_font_montserrat_14);
 	lv_style_set_text_letter_space(&button_style, 5);

@@ -250,4 +250,4 @@ touch_display/lcdcontroller.o: ..\display\LCDcontroller.c \
   ..\Drivers\lvgl\src\extra\widgets\imgbtn\..\..\..\lvgl.h \
   ..\Drivers\lvgl\src\extra\widgets\span\lv_span.h \
   ..\Drivers\lvgl\src\extra\widgets\span\..\..\..\lvgl.h \
-  ..\display\st7735.h
+  ..\display\st7735.h ..\display\touch.h
