@@ -112,5 +112,114 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 }
 
 /* USER CODE BEGIN 1 */
+//-------------------------------------------------------------------------------------------//
+/*void i2c_read_array (uint8_t slave_address, uint8_t registr_adr, uint8_t * data, uint8_t numb_byte)
+{
+	uint8_t count = 0;
+	uint8_t tmp_buf[2] ;
+	tmp_buf[0] = (uint8_t)slave_address>>8;
+	tmp_buf[1] = (uint8_t)((0x00FF & slave_address) | FLAG_WRITE);
+	
+  LL_I2C_DisableBitPOS(I2C1);
+  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};   //read state
+  (void) I2C1->SR1;
+		
+  LL_I2C_TransmitData8(I2C1, tmp_buf[0]);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  LL_I2C_TransmitData8(I2C1, tmp_buf[1]);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+		
+	while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);	
+		
+	LL_I2C_TransmitData8(I2C1, registr_adr);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};	
+		
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+  (void) I2C1->SR1;
+		
+	LL_I2C_TransmitData8(I2C1, tmp_buf[0]);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  LL_I2C_TransmitData8(I2C1, tmp_buf[1]);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+		
+  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);
+		
+  for(count=0; count<numb_byte; count++)
+  {
+    if(count < (numb_byte-1))
+    {
+      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+      *(data+count) = LL_I2C_ReceiveData8(I2C1);
+    }
+    else
+    {
+      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
+      LL_I2C_GenerateStopCondition(I2C1);
+      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+      *(data+count) = LL_I2C_ReceiveData8(I2C1);
+    }
+  }		
+}
 
+//--------------------------------------------------------------------------------------//
+void i2c_write_buffer_16bit_registr (uint8_t slave_address, uint16_t registr_adr, uint8_t * data_buffer, uint8_t numb_byte)
+{
+	uint8_t tmp_buf[2] ;
+	tmp_buf[0] = (uint8_t)(registr_adr>>8);
+	tmp_buf[1] = (uint8_t)(0x00FF & registr_adr);
+	uint8_t count = 0;
+	
+	LL_I2C_DisableBitPOS(I2C1);
+  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+	
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};   //read state
+  (void) I2C1->SR1;
+		
+  LL_I2C_TransmitData8(I2C1, slave_address | FLAG_WRITE);
+  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);
+		
+  LL_I2C_TransmitData8(I2C1, (uint8_t) tmp_buf[0]);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+		
+  LL_I2C_TransmitData8(I2C1, (uint8_t) tmp_buf[1]);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+		
+  for(count = 0; count<numb_byte; count++)
+  {
+    LL_I2C_TransmitData8(I2C1, *(data_buffer + count));
+    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  }
+  LL_I2C_GenerateStopCondition(I2C1); //условие STOP
+}
+
+//-------------------------------------------------------------------------------------//
+void i2c_write_buffer (uint8_t slave_address, uint8_t * data_buffer, uint8_t numb_byte)
+{
+	uint8_t count = 0;
+	
+	LL_I2C_DisableBitPOS(I2C1);
+  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+	
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};   //read state
+  (void) I2C1->SR1;
+		
+  LL_I2C_TransmitData8(I2C1, slave_address | FLAG_WRITE);
+  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);
+		
+	for(count = 0; count < numb_byte; count++)
+  {
+    LL_I2C_TransmitData8(I2C1, *(data_buffer + count));
+    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  }
+  LL_I2C_GenerateStopCondition(I2C1); //условие STOP
+}*/
 /* USER CODE END 1 */

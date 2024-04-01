@@ -17,7 +17,7 @@ uint8_t SetTime (uint8_t , uint8_t , char *);
 void edit_RTC_data (uint8_t , char * );
 uint8_t read_reg_RTC (uint8_t , uint8_t );
 uint8_t get_file_title (void);	
-void convert_time (unsigned char , char * , unsigned char * );	
+void convert_time (char * , unsigned char * , unsigned char );	
 #ifdef __cplusplus
 }
 #endif

@@ -7,9 +7,10 @@
 #include "main.h" 
 
 // Function prototypes --------------------------------------------------------//
+uint8_t isTouch (void);
 void TouchInit(void);
 void TouchCalibrate (void);
-uint8_t ILI9341_TouchGetCoordinates(uint16_t *, uint16_t *) ;
+uint8_t ILI9341_TouchGetCoordinates(int16_t *, int16_t *) ;
 // Private macro -------------------------------------------------------------//
 
 // Private defines -----------------------------------------------------------//

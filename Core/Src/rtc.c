@@ -1,6 +1,7 @@
 // Includes -----------------------------------------------------------------------------------------//
 #include "rtc.h"
 #include "i2c.h"
+#include "time64.h"
 
 // DEFINES ------------------------------------------------------------------------------------------//
 
@@ -11,6 +12,9 @@ static uint8_t RTC_ConvertToDec(uint8_t );
 static uint8_t RTC_ConvertToBinDec(uint8_t );
 
 // STATIC VARIABLES---------------------------------------------------------------------------------//
+I2C_TypeDef * RTC_I2C = I2C1;
+struct TM TimeStamp;
+
 //массив с количеством дней в предыдущем мес€це, [0][12] - не високосный, [1][12] - високосный 
 const unsigned int pred_sum [2] [12] =	{ 
 																					{0,31,59,90,120,151,181,212,243,273,304,334}, 
@@ -28,6 +32,7 @@ uint8_t GetTime (uint8_t RTC_adress, uint8_t registr_adress, uint8_t sizebuf, ui
 		
 	if(HAL_I2C_Master_Receive (&hi2c1, (uint16_t) RTC_adress, (uint8_t*)RTC_buffer, (uint16_t) sizebuf, (uint32_t)0xFFFF)!=HAL_OK) //запись показателей времени	
 	{	return  HAL_ERROR;	}
+//	i2c_read_array ((uint16_t)RTC_adress, registr_adress, RTC_buffer, sizebuf);
 	
 	for (uint8_t count = 0; count < sizebuf; count++)
 	{
@@ -85,6 +90,7 @@ uint8_t SetTime (uint8_t RTC_adress, uint8_t registr_adress, char *time)
 	
 	if (HAL_I2C_Master_Transmit(&hi2c1, (uint16_t) RTC_adress, (uint8_t*)I2C_RTC_buffer, 4, (uint32_t)0xFFFF)!= HAL_OK) //отправка данных
 	{	return  HAL_ERROR;	}
+	//i2c_write_buffer_16bit_registr (RTC_adress, registr_adress, I2C_RTC_buffer, 4); //Prepare the generation of a ACKnowledge condition
 	
 	return  HAL_OK;
 }
@@ -108,7 +114,6 @@ static uint8_t RTC_ConvertToBinDec(uint8_t digit)
 uint8_t read_reg_RTC (uint8_t adress, uint8_t sizebuf)
 {
 	uint8_t reg_adr = 0x2; //адрес регистра RTC 
-//	uint8_t sizebuf = 0x3; //количество байт дл€ чтени€
 	uint8_t I2C_RTC_buffer [sizebuf];
 	
 	if(HAL_I2C_Master_Transmit(&hi2c1, (uint16_t)adress, &reg_adr, 1, (uint32_t)0xFFFF)!= HAL_OK) //передача адреса RTC DS3231
@@ -138,13 +143,13 @@ uint8_t get_file_title (void)
 	uint8_t file_title = 0;
 	
 	GetTime (RTC_ADDRESS,  FIRST_REGISTR_DATE, 3, Date); //чтение регистров 0х4-0х6 (дата: дд/мм/гг)
-	file_title = ((pred_sum [0][*(Date+1)-1] )+ *Date);
+	file_title = ((pred_sum [0][*(Date+1)-1] )+ *Date); //извлечение не високосного года
 	
 	return file_title;
 }
 
 //-----------------------------перевод данных времени из числовой в символьной-----------------------------//
-void convert_time (uint8_t time_size, char * mod_time_data, uint8_t * time_data)
+void convert_time (char * mod_time_data, uint8_t * time_data, uint8_t time_size)
 {
 		
 	for (int8_t count = (time_size-1); count >= 0; count--)

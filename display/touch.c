@@ -31,9 +31,9 @@ static const int16_t yCenter[] = {OFFSET, OFFSET, DISPLAY_PANEL_HEIGHT-OFFSET,	D
 static int16_t xPos[5], yPos[5];
 static int16_t axc[2], ayc[2], bxc[2], byc[2];
 static int16_t ax, bx, ay, by; // Корректирующие коэффициенты
+static uint8_t XPT2046_initilazed = FALSE;
 
 //Private function prototypes  --------------------------------------------//
-static uint8_t isTouch (void);
 static uint8_t TouchVerifyCoef (void);
 static void TouchSetCoef ( int16_t , int16_t , int16_t , int16_t );
 
@@ -43,10 +43,11 @@ void TouchInit(void)
 	calibration_flag = FALSE;
 	dispSizeX = DISPLAY_PANEL_WIDTH; //Установка размеров дисплея
 	dispSizeY = DISPLAY_PANEL_HEIGHT;
+	XPT2046_initilazed = TRUE;
 }
 
 //----------------------------------------Проверка наличия касания----------------------------------------//
-static uint8_t isTouch (void)
+uint8_t isTouch (void)
 {
 	if (LL_GPIO_IsInputPinSet( TOUCH_IRQ_GPIO_Port, TOUCH_IRQ_Pin ) == RESET )
   {	return TRUE;	}// было касание 
@@ -65,7 +66,7 @@ static uint8_t TouchVerifyCoef ( void )
 //Калибровка----------------------------------------------------------------------------------------------//
 void TouchCalibrate (void)
 {
-	uint16_t x, y;
+	int16_t x, y;
 
 	// Если калибровочные коэффициенты уже установлены - выход
 /*	if ( !TouchVerifyCoef ( ) )
@@ -95,7 +96,7 @@ void TouchCalibrate (void)
 	LCD_ShowString(50, 70, LCD_str_buffer);
 	LCD_ShowString(50, 100, "release");	
 	LCD_Refresh();
-	HAL_Delay(3000);
+//	HAL_Delay(3000);
 	while (isTouch() == TRUE) {} // ждать отпускания
 		
 	//Правый верхний угол
@@ -122,7 +123,7 @@ void TouchCalibrate (void)
 	LCD_ShowString(50, 70, LCD_str_buffer);
 	LCD_ShowString(50, 100, "release");	
 	LCD_Refresh();
-	HAL_Delay(3000);
+//	HAL_Delay(3000);
 	while (isTouch() == TRUE) {} // ждать отпускания
 
 	ClearLcdMemory(); 	// Левый нижний угол
@@ -148,7 +149,7 @@ void TouchCalibrate (void)
 	LCD_ShowString(50, 70, LCD_str_buffer);
 	LCD_ShowString(50, 100, "release");	
 	LCD_Refresh();
-	HAL_Delay(3000);
+//	HAL_Delay(3000);
 	while (isTouch() == TRUE) {} // ждать отпускания
 
 	ClearLcdMemory(); // Правый нижний угол
@@ -174,7 +175,7 @@ void TouchCalibrate (void)
 	LCD_ShowString(50, 70, LCD_str_buffer);
 	LCD_ShowString(50, 100, "release");	
 	LCD_Refresh();
-	HAL_Delay(3000);
+//	HAL_Delay(3000);
 	while (isTouch() == TRUE) {} // ждать отпускания
 
 	// Расчёт коэффициентов
@@ -199,7 +200,6 @@ void TouchCalibrate (void)
 	LCD_ShowString(5, 70, LCD_str_buffer);
 	LCD_Refresh();
 	calibration_flag = TRUE;
-	//delay_us (1000); //1 ms
 } 
 
 //---------------------------------Сохранение калибровочных коэффициентов---------------------------------//ъ
@@ -213,7 +213,7 @@ static void TouchSetCoef ( int16_t _ax, int16_t _bx, int16_t _ay, int16_t _by )
 
 
 //--------------------------------------------------------------------------------------------------------//
-uint8_t ILI9341_TouchGetCoordinates(uint16_t * x, uint16_t * y) 
+uint8_t ILI9341_TouchGetCoordinates(int16_t * x, int16_t * y) 
 {
 	static const uint8_t cmd_read_x[] = { READ_X };
 	static const uint8_t cmd_read_y[] = { READ_Y };
@@ -272,3 +272,4 @@ uint8_t ILI9341_TouchGetCoordinates(uint16_t * x, uint16_t * y)
 	return TRUE;
 }
 
+//-------------------------------------------------------------------------------------------------------//

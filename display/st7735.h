@@ -157,10 +157,10 @@ extern const unsigned char * GlobalFont;
 extern uint32_t Paint_Color;
 extern uint32_t Back_Color;
 extern uint8_t LCD_buffer[];
-/*extern const unsigned char Arial_26x28[224*112];
-extern const unsigned char Arial_31x33[224*132];	// 20pt
-extern const unsigned char Arial_36x37[224*185];	// 24pt
-extern const unsigned char Arial_44x46[224*276];  	// 30pt*/
+//extern const unsigned char Arial_26x28[224*112];		//
+//extern const unsigned char Arial_31x33[224*132];		// 20pt
+//extern const unsigned char Arial_36x37[224*185];		// 24pt
+//extern const unsigned char Arial_44x46[224*276];  	// 30pt
 
 #ifdef __cplusplus
 } /*extern "C"*/

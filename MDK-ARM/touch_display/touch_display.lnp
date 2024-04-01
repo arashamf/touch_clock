@@ -229,6 +229,7 @@
 "touch_display\lv_tiny_ttf.o"
 "touch_display\lv_flex.o"
 "touch_display\lv_grid.o"
+"touch_display\time64.o"
 --strict --scatter "touch_display\touch_display.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

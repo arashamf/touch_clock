@@ -42,4 +42,6 @@ touch_display/rtc.o: ..\Core\Src\rtc.c ..\Core\Inc\rtc.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_pwr.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h ..\Core\Inc\i2c.h
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h ..\Core\Inc\i2c.h \
+  ..\timer64\time64.h C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\time.h \
+  ..\timer64\time64_config.h
