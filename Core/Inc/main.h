@@ -42,8 +42,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdio.h"
-#include "string.h"
+#include "lvgl.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -84,10 +83,31 @@ void Error_Handler(void);
 #define LCD_CS_Pin LL_GPIO_PIN_5
 #define LCD_CS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+//------------------------------------------------
 #define 	ON 		1
 #define 	OFF 	0
 
+#define 	MAIN_SCR_ACT 		0
+#define 	DATE_SCR_ACT 		1
+//------------------------------------------------
+typedef union 
+{	
+	struct 
+	{
+		uint8_t												: 7;
+		uint8_t flag_button 					: 1; //статус кнопки
+	};
+	uint8_t FlagStatus;
+} STATUS_t;
+
+//------------------------------------------------
 extern char LCD_str_buffer[16];
+extern lv_obj_t * date_scr;
+extern lv_obj_t * default_scr;
+extern const char main_btn_label[];
+extern const char date_btn_label[];
+
+extern STATUS_t Status;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdio.h"
 #include "st7735.h"
 #include "Font.h"
 #include "touch.h"
@@ -67,11 +68,17 @@ char demo_time[]={'1', '2', '1', '2', '1', '2'};
 
 lv_obj_t * led_red;
 lv_obj_t * led_green;
-lv_obj_t * date_screen;
 lv_obj_t * default_scr;
+lv_obj_t * spinner;
+lv_span_t * clock_span;
+lv_style_t button_style; // Переменные стиля должны быть static, глобальными или динамически распределяемыми
+lv_obj_t * main_button;
+lv_obj_t * date_scr;
 
-lv_span_t *  clock_span;
-lv_obj_t * button;
+const char main_btn_label[]="date";
+const char date_btn_label[]="clock";
+
+STATUS_t Status;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -138,28 +145,19 @@ int main(void)
 	lv_init();
   lv_port_disp_init();	//активация аппаратного дисплея
 	lv_port_indev_init(); //активация тачскрина
-	default_scr = lv_scr_act();
-	date_screen = lv_obj_create (NULL);
 	
-	// Change the active screen's background color
-	lv_obj_set_style_bg_color(default_scr, lv_color_hex(LV_PALETTE_INDIGO), LV_PART_MAIN);
-	lv_obj_set_style_text_color(default_scr, lv_color_hex(0xffffff), LV_PART_MAIN);
-
-	//Create a spinner. Объект Spinner представляет собой вращающуюся дугу внутри круга.
-	lv_obj_t * spinner = lv_spinner_create(default_scr, 1000, 32);
-	lv_obj_set_size(spinner, 48, 48);
-	lv_obj_align(spinner,  LV_ALIGN_TOP_MID, 0, 5);
+	default_scr = lv_scr_act(); //получение указателя на основной экран 
+	default_scr = lv_screen_init (default_scr);
+	button_style_init (button_style);
+//	led_red = lv_redled_init (default_scr);
+//	led_green = lv_greenled_init (default_scr);
+	main_button = lv_button_init (default_scr, &button_style, (char *)main_btn_label); // Create a button	
+	clock_span = lv_span_init (default_scr); //Создание объекта span group. Span - это объект, который используется для отображения форматированного текста. 
+	spinner = lv_spinner_init (default_scr);
 	
-	lv_calendar(date_screen);
-	
-	button = button_init (default_scr); // Create a button	
-	led_red  = lv_led_create(default_scr);	// Create a red led	
-	led_green  = lv_led_create(default_scr); //Create a green led
-	lv_2leds_init (led_red, led_green); //init leds
-	
-	//Создание объекта span group. Span - это объект, который используется для отображения форматированного текста. 
-	//В отличие от объекта label, spangroup может отображать текст, стилизованный под другие шрифты, цвета и размеры, в объект spangroup.
-	clock_span = lv_span_init (lv_scr_act()); 
+	date_scr = lv_obj_create (NULL); //создание экрана
+	date_scr = lv_screen_init (date_scr);
+  lv_win_date(date_scr);
 	
 //	SetTime (RTC_ADDRESS, FIRST_REGISTR_TIME, demo_time); //установка времени
 	
@@ -188,16 +186,9 @@ int main(void)
 		
 		TOOGLE_GREEN_LED();
 		TOOGLE_RED_LED();
-		lv_led_toggle(led_red);
-		lv_led_toggle(led_green);
+//	lv_led_toggle(led_red);
+//	lv_led_toggle(led_green);
 		
-		if ( lv_scr_act() != date_screen)
-		{	lv_scr_load(date_screen);	}
-		else
-		{
-			if ( lv_scr_act() == date_screen)
-			{	lv_scr_load(default_scr); }	
-		}
 		if (GetTime (RTC_ADDRESS, FIRST_REGISTR_TIME, 3, RTC_data) == HAL_OK)
 		{	convert_time (time, RTC_data, 3); }						//перевод данных времени из числовой в символьной
 		else

@@ -41,11 +41,6 @@ touch_display/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_utils.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_pwr.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h ..\Core\Inc\dma.h \
-  ..\Core\Inc\main.h ..\Core\Inc\i2c.h ..\Core\Inc\spi.h \
-  ..\Core\Inc\tim.h ..\Core\Inc\gpio.h ..\display\st7735.h \
-  ..\display\Font.h ..\display\touch.h ..\Core\Inc\rtc.h \
   ..\Drivers\lvgl\lvgl.h ..\Drivers\lvgl\src\misc\lv_log.h \
   ..\Drivers\lvgl\src\misc\..\lv_conf_internal.h \
   ..\Drivers\lvgl\src\misc\..\lv_conf_kconfig.h \
@@ -56,6 +51,7 @@ touch_display/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\lvgl\src\misc\..\hal\..\lv_conf_internal.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
   ..\Drivers\lvgl\src\misc\lv_math.h ..\Drivers\lvgl\src\misc\lv_mem.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h \
   ..\Drivers\lvgl\src\misc\lv_async.h \
   ..\Drivers\lvgl\src\misc\lv_anim_timeline.h \
   ..\Drivers\lvgl\src\misc\lv_anim.h \
@@ -252,4 +248,8 @@ touch_display/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\lvgl\src\extra\widgets\imgbtn\..\..\..\lvgl.h \
   ..\Drivers\lvgl\src\extra\widgets\span\lv_span.h \
   ..\Drivers\lvgl\src\extra\widgets\span\..\..\..\lvgl.h \
+  ..\Core\Inc\dma.h ..\Core\Inc\main.h ..\Core\Inc\i2c.h \
+  ..\Core\Inc\spi.h ..\Core\Inc\tim.h ..\Core\Inc\gpio.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h ..\display\st7735.h \
+  ..\display\Font.h ..\display\touch.h ..\Core\Inc\rtc.h \
   ..\display\LCDController.h

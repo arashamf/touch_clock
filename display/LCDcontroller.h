@@ -12,15 +12,20 @@ extern "C" {
 
 // TYPEDEFS ------------------------------------------------------------------//
 
+
 // GLOBAL PROTOTYPES---------------------------------------------------------//
 void lv_port_disp_init(void); // Initialize low level display driver 
 void lv_port_indev_init(void);
 void disp_enable_update(void); //Enable updating the screen (the flushing process) when disp_flush() is called by LVGL
 void disp_disable_update(void); //Disable updating the screen (the flushing process) when disp_flush() is called by LVGL
+lv_obj_t * lv_screen_init (lv_obj_t * );
 lv_span_t * lv_span_init (lv_obj_t * );
-void lv_2leds_init (lv_obj_t * led1, lv_obj_t * led2);
-lv_obj_t * button_init (lv_obj_t * );
-void lv_calendar(lv_obj_t * );
+lv_obj_t * lv_spinner_init (lv_obj_t * );
+lv_obj_t * lv_redled_init (lv_obj_t *);
+lv_obj_t * lv_greenled_init (lv_obj_t *);
+void button_style_init (lv_style_t );
+lv_obj_t * lv_button_init (lv_obj_t * , lv_style_t* , char *);
+void lv_win_date(lv_obj_t * );
 // MACROS--------------------------------------------------------------------//
 
 

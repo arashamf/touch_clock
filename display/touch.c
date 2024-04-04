@@ -5,6 +5,8 @@
 #include "spi.h"
 #include "tim.h"
 #include "st7735.h"
+#include "stdio.h"
+//#include "string.h"
 
 // Private defines -------------------------------------------------------//
 
